@@ -3,7 +3,7 @@
     "public": "public",
     "rewrites": [
       {
-        "source": "/login",
+        "source": "**",
         "function": "app"
       }
     ]
