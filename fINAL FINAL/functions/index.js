@@ -13,11 +13,28 @@ const firebaseApp = firebase.initializeApp(
     messagingSenderId: "654921925436"
   }
 );
-const auth = firebaseApp.auth()
+const auth = firebaseApp.auth();
+const database = firebaseApp.database();
 
 const app = express();
 app.set('views', './views');
 app.set('view engine', 'pug');
+
+app.get('/', (request, response) => {
+  console.log("getting start")
+  if (auth.currentUser !== null) {
+    console.log("user not null")
+    const uid = auth.currentUser.uid
+    console.log(uid)
+    database.ref('/users/'+uid).once('value').then( (snapshot) => {
+      const type = snapshot.val().type;
+      return response.render('main_menu_'+type);
+    }).catch(err => console.log(err.code));
+  } else {
+    console.log("User null")
+    response.render('login')
+  }
+});
 
 app.get('/login', (request, response) => {
   response.render('login');
