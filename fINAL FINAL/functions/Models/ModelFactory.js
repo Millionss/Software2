@@ -1,13 +1,10 @@
-const Course = require('./Course.js')
-const User = require('./User.js')
+const Course = require('./Course.js');
+const User = require('./User.js');
 
-
-module.exports = {
-    createUser(snapshot) {
+class ModelFactory {
+    createUser(snapshot, courses) {
         const val = snapshot.val()
-        var courses = []
         var alumnee;
-        console.log(val.type)
         switch (val.type) {
             case "alumnee":
             alumnee = new User(snapshot.key, val.name, val.email, val.type, courses);
@@ -16,7 +13,16 @@ module.exports = {
             alumnee = new User(snapshot.key, val.name, val.email, val.type);
             break;
         }
-        
         return alumnee;
     }
-}    
+
+    createCourse(snapshotCourse, snapshotTeacher) {
+        const val = snapshotCourse.val();
+        var course;
+        var teacher = this.createUser(snapshotTeacher)
+        course = new Course(snapshotCourse.key, val.name, val.section, teacher)
+        return course;
+    }
+}
+  
+module.exports = ModelFactory;
