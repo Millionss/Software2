@@ -10,11 +10,11 @@ html(lang='en')
     .col(align='center')
      img(src='https://lh3.googleusercontent.com/proxy/COrfOXxGSePnZRaqyMl00uvmd-2iJqp_ax1OcIgV4BauKfT7qDWfCdI0Sow59Tqzpi6-5JGr343wj5GsqYQGkgqHkc_buu8bp6U3o4KlY3p9rXVjjAKg8q52wsOv9EpHL1GjK0pSdksdO6-gp8C4P4uRkb2eeUg=w160-h160-k-no')
     h1 Smart
-    p Bienvenido , #{'alumno'}
+    p Bienvenido , #{name}
     
      nav
      a(href="pantalla_seleccion.html") Mas citas
-    .container Acesorias
+    .container Asesorias
       .row
         .col
           table.table
@@ -25,30 +25,13 @@ html(lang='en')
                 th(scope='col') Profesor
                 th(scope='col') seccion
             tbody
+              each course in courses
                 tr
                 th(scope='row') 1
                 td
-                 a(href="consulta_al.html") curso_1
-                td nombre_profesor
-                td 601
-                tr
-                th(scope='row') 2
-                td
-                 a(href="consulta_al.html") curso_2
-                td nombre_profesor
-                td 701
-                tr
-                th(scope='row') 3
-                td
-                 a(href="consulta_al.html") curso_3
-                td nombre_profesor
-                td 804
-                tr
-                th(scope='row') 4
-                td
-                 a(href="consulta_al.html") curso_4
-                td nombre_profesor
-                td 604
+                 a(href="consulta_al.html")  #{course}
+                td  #{course.teacher}
+                td  #{course.section}
             table.table
             
     
