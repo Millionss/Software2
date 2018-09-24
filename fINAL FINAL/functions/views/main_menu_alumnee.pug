@@ -13,14 +13,14 @@ html(lang='en')
    .row
     .col-sm-2
      h1 Smart
-     p Bienvenido , #{'alumno'}
+     p Bienvenido , #{name}
      nav 
     .col-sm-8
     .col-sm-2
       a(href="login.html") Logout
       p 
       a(href="pantalla_seleccion.html") Mas citas / consultas      
-    .container Acesorias
+    .container Asesorias
       .row
         .col
           table.table
@@ -29,32 +29,15 @@ html(lang='en')
                 th(scope='col') 
                 th(scope='col') Cursos
                 th(scope='col') Profesor
-                th(scope='col') seccion
+                th(scope='col') Sección
             tbody
+            each course, index in courses
                 tr
-                th(scope='row') 1
+                th(scope='row') #{index}
                 td
-                 a(href="consulta_al.html") curso_1
-                td nombre_profesor
-                td 601
-                tr
-                th(scope='row') 2
-                td
-                 a(href="consulta_al.html") curso_2
-                td nombre_profesor
-                td 701
-                tr
-                th(scope='row') 3
-                td
-                 a(href="consulta_al.html") curso_3
-                td nombre_profesor
-                td 804
-                tr
-                th(scope='row') 4
-                td
-                 a(href="consulta_al.html") curso_4
-                td nombre_profesor
-                td 604
+                 a(href="consulta_al.html")  #{course.name}
+                td #{course.teacher.name}
+                td #{course.section}
             table.table
             
     
