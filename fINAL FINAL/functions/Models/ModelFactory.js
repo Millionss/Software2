@@ -2,12 +2,12 @@ const Course = require('./Course.js');
 const User = require('./User.js');
 
 class ModelFactory {
-    createUser(snapshot, courses) {
+    createUser(snapshot) {
         const val = snapshot.val()
         var alumnee;
         switch (val.type) {
             case "alumnee":
-            alumnee = new User(snapshot.key, val.name, val.email, val.type, courses);
+            alumnee = new User(snapshot.key, val.name, val.email, val.type, []);
             break;
             case "professor":
             alumnee = new User(snapshot.key, val.name, val.email, val.type);
