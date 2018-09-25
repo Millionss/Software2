@@ -1,6 +1,6 @@
 const Course = require('./Course.js');
 const users = require('./User.js');
-const Asesoria = require('./Asesoria.js')
+const asesoria = require('./Asesoria.js')
 
 class ModelFactory {
     /**
@@ -45,19 +45,26 @@ class ModelFactory {
      * @param {Snapshot de una asesoria obtenida de firebase} snapshot 
      */
     createAsesoria(snapshot) {
-        const val = snapshotCourse.val();
-        var days;
+        const val = snapshot.val();
+        var days = "";
         //Guardamos los dias como un string
         snapshot.child('schedule/days').forEach(day => {
+            console.log(days)
             if (days) {
                 days = days + ", " + day.val();
             } else {
                 days = day.val();
             }
         })
-        var time = val.time;
+        var time = val.schedule.time;
         var teacherUID = val.teacher;
-        return new Asesoria(snapshot.key, [], days, time, teacherUID);
+        var citas = []
+        snapshot.child('appointments').forEach(appointment => {
+            var cita = new asesoria.Cita(appointment.key, appointment.val().student, appointment.val().date)
+            citas.push(cita)
+        })
+        
+        return new asesoria.Asesoria(snapshot.key, citas, days, time, teacherUID);
     }
 }
 
