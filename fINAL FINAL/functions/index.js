@@ -55,7 +55,17 @@ app.get('/login', (request, response) => {
 });
 
 app.get('/main_menu_admin', (request, response) => {
-  response.render('main_menu_admin');
+  if (auth.currentUser !== null) {
+    database.ref('/users/'+auth.currentUser.uid).once('value').then( (snapshot) => {
+      const admin = models.createAdmin(snapshot)
+      console.log(admin.name)
+      return response.render('main_menu_admin', {
+      });
+    }).catch(err => console.log("error: " +err));
+    
+  }else {
+    response.redirect(307, '/login')
+  }
 })
 
 app.get('/main_menu_alumnee', (request, response) => {
