@@ -57,8 +57,7 @@ app.get('/main_menu_admin', (request, response) => {
       console.log(admin)
       return response.render('main_menu_admin', {
       });
-    }).catch(err => console.log("error: " +err));
-    
+    }).catch(err => console.log("error: " +err)); 
   }else {
     response.redirect(307, '/login')
   }

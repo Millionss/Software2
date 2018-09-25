@@ -9,19 +9,19 @@ class ModelFactory {
      */
     createUser(snapshot) {
         const val = snapshot.val()
-        var user;
+        var alumnee;
         switch (val.type) {
             case "alumnee":
             alumnee = new users.Student(snapshot.key, val.name, val.email, val.type, []);
             break;
             case "professor":
-            alumnee = new users.Teacher(snapshot.key, val.name, val.email, val.type);
+            alumnee = new users.Teacher(snapshot.key, val.name, val.email, val.type, []);
             break;
             case "admin":
-            alumnee = new users.Admin(snapshot.key, val.name, val.email, val.type);
+            alumnee = new users.Admin(snapshot.key, val.name, val.email, val.type, []);
             break;
         }
-        return user;
+        return alumnee;
     }
 
     /**
