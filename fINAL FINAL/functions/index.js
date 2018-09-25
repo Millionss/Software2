@@ -53,7 +53,7 @@ app.get('/login', (request, response) => {
 app.get('/main_menu_admin', (request, response) => {
   if (auth.currentUser !== null) {
     database.ref('/users/'+auth.currentUser.uid).once('value').then( (snapshot) => {
-      const admin = models.createAdmin(snapshot)
+      var admin = models.createUser(snapshot)
       console.log(admin.name)
       return response.render('main_menu_admin', {
       });
