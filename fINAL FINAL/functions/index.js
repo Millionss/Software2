@@ -35,10 +35,9 @@ app.get('/', (request, response) => {
     if (typeof request.session.type !== "undefined") {
       response.redirect(307, '/main_menu_'+request.session.type);
     } else {
-      database.ref('/users/'+uid).once('value').then( (snapshot) => {
-        const alumnee = models.createUser(snapshot)
-        request.session.type = alumnee.type
-        return response.redirect('/main_menu_'+alumnee.type);
+      database.ref('/users/'+uid+'/type').once('value').then( (snapshot) => {
+        request.session.type = snapshot.val()
+        return response.redirect('/main_menu_'+snapshot.val());
       }).catch(err => console.log("Error: "+err));
     }
   } else {
@@ -58,7 +57,8 @@ app.get('/main_menu_alumnee', (request, response) => {
   if (auth.currentUser !== null) { 
     database.ref('/users/'+auth.currentUser.uid).once('value').then( snapshotUser => {
       var coursesSnapshot = snapshotUser.child('courses')
-      var alumnee = models.createUser(snapshotUser)
+      var student = models.createUser(snapshotUser)
+      console.log(student)
       var counter = 0
       coursesSnapshot.forEach( course => {
         counter++
@@ -66,11 +66,12 @@ app.get('/main_menu_alumnee', (request, response) => {
           var teacherID = snapshotCourse.val().teacher;
           database.ref('/users/'+teacherID).once('value').then( snapshotTeacher => {
             const course = models.createCourse(snapshotCourse, snapshotTeacher);
-            alumnee.courses.push(course)
-            if (alumnee.courses.length == counter) {
+            student.courses.push(course)
+            if (student.courses.length == counter) {
+              const teachers = student.filterCoursesByTeacher()
               return response.render('main_menu_alumnee', {
-                name: alumnee.name,
-                courses: alumnee.courses
+                name: student.name,
+                teachers: teachers
               });
             }
           }).catch(err => console.log("Error: "+err))

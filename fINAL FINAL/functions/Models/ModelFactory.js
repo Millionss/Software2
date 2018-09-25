@@ -12,10 +12,10 @@ class ModelFactory {
         var alumnee;
         switch (val.type) {
             case "alumnee":
-            alumnee = new users.Student(snapshot.key, val.name, val.email, val.type, []);
+            alumnee = new users.Student(snapshot.key, val.name, val.email, []);
             break;
             case "professor":
-            alumnee = new users.Teacher(snapshot.key, val.name, val.email, val.type);
+            alumnee = new users.Teacher(snapshot.key, val.name, val.email, []);
             break;
             case "admin":
             //TODO
