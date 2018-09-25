@@ -18,7 +18,7 @@ class ModelFactory {
             alumnee = new users.Teacher(snapshot.key, val.name, val.email, val.type);
             break;
             case "admin":
-            //TODO
+            alumnee = new users.Admin(snapshot.key, val.name, val.email, val.type);
             break;
         }
         return user;

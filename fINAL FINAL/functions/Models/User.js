@@ -43,12 +43,14 @@ class Teacher extends User {
 }
 
 class Admin extends User {
-
+    constructor(id, name, email){
+        super(id, name, email)
+    }
 }
 
 module.exports = {
     User: User,
-    Studente: Student,
+    Student: Student,
     Teacher: Teacher,
     Admin: Admin
 }
