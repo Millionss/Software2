@@ -52,8 +52,8 @@ app.get('/login', (request, response) => {
 
 app.get('/main_menu_admin', (request, response) => {
   if (auth.currentUser !== null) {
-    database.ref('/users/'+auth.currentUser.uid).once('value').then( (snapshot) => {
-      var admin = models.createUser(snapshot)
+    database.ref('/users/'+auth.currentUser.uid).once('value').then( (snapshotUser) => {
+      var admin = models.createUser(snapshotUser)
       console.log(admin.name)
       return response.render('main_menu_admin', {
       });

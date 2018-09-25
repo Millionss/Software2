@@ -9,7 +9,7 @@ class User {
 class Student extends User {
     constructor(id, name, email, courses) {
         super(id, name, email)
-        self.courses = courses
+        this.courses = courses
     }
 
     /**
@@ -38,7 +38,7 @@ class Student extends User {
 class Teacher extends User {
     constructor(id, name, email, courses) {
         super(id, name, email)
-        self.courses = courses
+        this.courses = courses
     }
 }
 
