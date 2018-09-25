@@ -16,22 +16,7 @@ module.exports = {
             alumnee = new User(snapshot.key, val.name, val.email, val.type);
             break;
         }
-
+        
         return alumnee;
     }
-}
-
-module.exports = {
-    createAsesoria(snapshot) {
-        const val = snapshot.val()
-        var courses = []
-        var teacher
-        var asesoria;
-        console.log(val.type)
-        switch (val.type) {
-            asesoria= new Asesoria(snapshot.key, val.name, courses);
-            break;
-        }
-        return asesoria;
-    }
-}
+}    
