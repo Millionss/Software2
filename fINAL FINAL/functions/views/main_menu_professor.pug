@@ -13,36 +13,30 @@ html(lang='en')
    .row
     .col-sm-4
      h1 Smart
-     p Bienvenido , #{'Profesor'} 
+     p Bienvenido , #{name} 
     .col-sm-6
     .col-sm-2
       a(href="login.html") Logout
-    .container Acesorias
+      p
+      a(href="") Mis consultas
+    .container Asesorias
       .row
         .col
           table.table
             thead.thead-dark
                 tr
                 th(scope='col') 
-                th(scope='col') Cursos
-                th(scope='col') seccion
+                th(scope='col') Horario
+                th(scope='col') Dias
+                th(scope='col') Acciones
             tbody
+              each asesoria, index in asesorias
                 tr
-                th(scope='row') 1
-                td curso_1
-                td 601
-                tr
-                th(scope='row') 2
-                td curso_2
-                td 701
-                tr
-                th(scope='row') 3
-                td curso_3
-                td 804
-                tr
-                th(scope='row') 4
-                td curso_4
-                td 604
+                th(scope='row') #{index+1}
+                td #{asesoria.horario}
+                td #{asesoria.dias}
+                td
+                 a(href="consulta_al.html") Ver citas
             table.table
             
     
