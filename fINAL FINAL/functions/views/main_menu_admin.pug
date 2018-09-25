@@ -13,7 +13,7 @@ html(lang='en')
    .row
     .col-sm-4
      h1 Smart
-     p Bienvenido , #{'Administrador'} 
+     p Bienvenido , #{name}
     .col-sm-6
     .col-sm-2
       a(href="login.html") Logout
@@ -23,28 +23,13 @@ html(lang='en')
           table.table
             thead.thead-dark
                 tr
-                th(scope='col') 
-                th(scope='col') Registros
-                th(scope='col') 
+                th(scope='col') Asesoria 
+                th(scope='col') curso
+                th(scope='col') Profesor
+                th(scope='col') Seccion
+                th(scope='col') dias
             tbody
-                tr
-                th(scope='row') 1
-                td  registro_1
-                td 
-                 input(type='checkbox', checked='checked')
-                tr
-                tr
-                th(scope='row') 2
-                td  registro_2
-                td 
-                 input(type='checkbox', checked='checked')
-                tr
-                tr
-                th(scope='row') 3
-                td  registro_3
-                td 
-                 input(type='checkbox', checked='checked')
-                tr
+            each course, index in courses    
             table.table
     .container    
      .col-sm-4 
