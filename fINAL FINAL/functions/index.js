@@ -29,6 +29,14 @@ app.use(session({
   cookie: {}
 }))
 
+/**
+ * Maneja la pagina principal. Este get redirecciona al usuario a su menu principal segun su 
+ * tipo de usuario. Si no se encuentra autentificado, se lo redirecciona al login.
+ * En sesion se busca almacenar el tipo del usuario para no volver a hacer un request a firebase
+ * en vano. 
+ * 
+ * No estoy seguro que el session funcione como esperaba.
+ */
 app.get('/', (request, response) => {
   if (auth.currentUser !== null) {
     const uid = auth.currentUser.uid
@@ -63,13 +71,21 @@ app.get('/main_menu_admin', (request, response) => {
   }
 })
 
-
+/**
+ * Esta funcion muestra el menu principal del alumno.
+ * Primero se obtiene el snapshot del alumno desde Firebase y se crea un objeto de clase Student.
+ * Despues, se obtiene el hijo 'Courses' y se iteran sus IDs respectivos. Al obtenerlos se realizan
+ * requests paralelos para obtener el curso. Una vez obtenido esto, se realiza otro request para obtener 
+ * al profesor por su ID. Todo esto se almacena en un objeto de tipo Curso que contiene un objeto de tipo
+ * Teacher dentro de este y se lo agrega a un array de cursos cotenido en alumno. 
+ * 
+ * Finalmente, se pinta el pug de main_menu_alumno con parametros para su nombre y el array de cursos.
+ */
 app.get('/main_menu_alumnee', (request, response) => {
-  if (auth.currentUser !== null) { 
+  if (auth.currentUser !== null) {  
     database.ref('/users/'+auth.currentUser.uid).once('value').then( snapshotUser => {
       var coursesSnapshot = snapshotUser.child('courses')
       var student = models.createUser(snapshotUser)
-      console.log(student)
       var counter = 0
       coursesSnapshot.forEach( course => {
         counter++
