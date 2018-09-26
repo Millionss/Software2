@@ -11,13 +11,13 @@ html(lang='en')
      img(src='https://lh3.googleusercontent.com/proxy/COrfOXxGSePnZRaqyMl00uvmd-2iJqp_ax1OcIgV4BauKfT7qDWfCdI0Sow59Tqzpi6-5JGr343wj5GsqYQGkgqHkc_buu8bp6U3o4KlY3p9rXVjjAKg8q52wsOv9EpHL1GjK0pSdksdO6-gp8C4P4uRkb2eeUg=w160-h160-k-no')
   .container
    .row
-    .col-sm-2
+    .col-sm-6
      h1 Smart
      p Bienvenido , #{name}
      nav 
-    .col-sm-8
+    .col-sm-4
     .col-sm-2
-      a(href="login.html") Logout
+      a(href="logout") Logout
       p 
       a(href="pantalla_seleccion.html") Mas citas / consultas      
     .container Asesorias
@@ -27,17 +27,15 @@ html(lang='en')
             thead.thead-dark
                 tr
                 th(scope='col') 
-                th(scope='col') Cursos
                 th(scope='col') Profesor
-                th(scope='col') Sección
+                th(scope='col') Cursos
             tbody
-            each course, index in courses
+            each teacher, index in teachers
                 tr
-                th(scope='row') #{index}
+                th(scope='row') #{index+1}
                 td
-                 a(href="consulta_al.html")  #{course.name}
-                td #{course.teacher.name}
-                td #{course.section}
+                 a(href="consulta_al.html")  #{teacher.name}
+                td #{teacher.courses}
             table.table
             
     

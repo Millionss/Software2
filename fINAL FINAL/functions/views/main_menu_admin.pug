@@ -11,48 +11,39 @@ html(lang='en')
      img(src='https://lh3.googleusercontent.com/proxy/COrfOXxGSePnZRaqyMl00uvmd-2iJqp_ax1OcIgV4BauKfT7qDWfCdI0Sow59Tqzpi6-5JGr343wj5GsqYQGkgqHkc_buu8bp6U3o4KlY3p9rXVjjAKg8q52wsOv9EpHL1GjK0pSdksdO6-gp8C4P4uRkb2eeUg=w160-h160-k-no')
   .container
    .row
-    .col-sm-4
-     h1 Smart
-     p Bienvenido , #{'Administrador'} 
     .col-sm-6
+     h1 Smart
+     p Bienvenido , #{name}
+    .col-sm-4
     .col-sm-2
       a(href="login.html") Logout
-    .container Acesorias
-      .row
+    .container Asesorias
+      .row  
         .col
           table.table
             thead.thead-dark
                 tr
-                th(scope='col') 
-                th(scope='col') Registros
+                th(scope='col') Asesoria 
+                th(scope='col') Profesor
+                th(scope='col') Horario
+                th(scope='col') dias
                 th(scope='col') 
             tbody
-                tr
-                th(scope='row') 1
-                td  registro_1
-                td 
-                 input(type='checkbox', checked='checked')
-                tr
-                tr
-                th(scope='row') 2
-                td  registro_2
-                td 
-                 input(type='checkbox', checked='checked')
-                tr
-                tr
-                th(scope='row') 3
-                td  registro_3
-                td 
-                 input(type='checkbox', checked='checked')
-                tr
+            each asesoria, index in asesorias
+                tr(scope='row')
+                th #{index+1}
+                th #{asesoria.profesorUID }
+                th #{asesoria.horario}
+                th #{asesoria.dias}
+                th 
+                 a(href="") Editar 
+                 a(href="") Eliminar 
+            tbody  
             table.table
     .container    
      .col-sm-4 
-       button.btn.btn-primary Editar registro 
-       button.btn.btn-primary Eliminar registro
-       p
      .col-sm-6 
-       button.btn.btn-primary(onclick="location.href='add_registro.html'") Agregar registro
+       button.btn.btn-primary(onclick="location.href='add_registro.html'") Agregar Asesoria
                     
         
             
