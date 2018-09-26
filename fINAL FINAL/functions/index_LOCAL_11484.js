@@ -107,36 +107,32 @@ app.get('/main_menu_admin', (request, response) => {
  * Finalmente, se pinta el pug de main_menu_alumno con parametros para su nombre y el array de cursos.
  */
 app.get('/main_menu_alumnee', (request, response) => {
-    if (auth.currentUser !== null) {
-      var student;
-      var coursesSnapshots = []
-      database.ref('/users/' + auth.currentUser.uid).once('value').then(snapshotUser => {
-        student = models.createUser(snapshotUser)
-        var promises = [];
-
-        snapshotUser.child('courses').forEach(course => {
-          coursesSnapshots.push(course)
-          var teacherID = course.val().teacher
-          console.log(teacherID)
-          promise = database.ref('/users/' + teacherID).once('value')
-          promises.push(promise)
-        })
-        return Promise.all(promises)
-      }).then(teacherSnapshots => {
-        teacherSnapshots.forEach((teacherSnapshot, index) => {
-          const course = models.createCourse(coursesSnapshots[index], teacherSnapshot)
-          student.courses.push(course)
-        })
-        const teachers = student.filterCoursesByTeacher()
-        return response.render('main_menu_alumnee', {
-          name: student.name,
-          teachers: teachers
-        }) 
+  if (auth.currentUser !== null) {
+    database.ref('/users/' + auth.currentUser.uid).once('value').then(snapshotUser => {
+      var coursesSnapshot = snapshotUser.child('courses')
+      var student = models.createUser(snapshotUser)
+      var counter = 0
+      coursesSnapshot.forEach(course => {
+        counter++
+        database.ref('/courses/' + course.val()).once('value').then(snapshotCourse => {
+          var teacherID = snapshotCourse.val().teacher;
+          database.ref('/users/' + teacherID).once('value').then(snapshotTeacher => {
+            const course = models.createCourse(snapshotCourse, snapshotTeacher);
+            student.courses.push(course)
+            if (student.courses.length == counter) {
+              const teachers = student.filterCoursesByTeacher()
+              return response.render('main_menu_alumnee', {
+                name: student.name,
+                teachers: teachers
+              });
+            }
+          }).catch(err => console.log("Error: " + err))
+        }).catch(err => console.log("Error: " + err))
       })
-}
-else {
-  response.redirect(307, '/login')
-}
+    }).catch(err => console.log("Error: " + err));
+  } else {
+    response.redirect(307, '/login')
+  }
 })
 
 

@@ -66,6 +66,7 @@ app.get('/login', (request, response) => {
  */
 app.get('/main_menu_admin', (request, response) => {
   if (auth.currentUser !== null) {
+<<<<<<< HEAD
     var admin;
     var asesorias = []
     database.ref('/users/' + auth.currentUser.uid).once('value').then((snapshotUser) => {
@@ -91,6 +92,13 @@ app.get('/main_menu_admin', (request, response) => {
         asesorias: asesorias
       })
     }) 
+=======
+    database.ref('/users/' + auth.currentUser.uid).once('value').then((snapshotUser) => {
+      var admin = models.createUser(snapshotUser)
+      console.log(admin)
+      return response.render('main_menu_admin', {});
+    }).catch(err => console.log("error: " + err));
+>>>>>>> feature/logica_alumno
   } else {
     response.redirect(307, '/login')
   }
@@ -107,6 +115,34 @@ app.get('/main_menu_admin', (request, response) => {
  * Finalmente, se pinta el pug de main_menu_alumno con parametros para su nombre y el array de cursos.
  */
 app.get('/main_menu_alumnee', (request, response) => {
+<<<<<<< HEAD
+  if (auth.currentUser !== null) {
+    database.ref('/users/' + auth.currentUser.uid).once('value').then(snapshotUser => {
+      var coursesSnapshot = snapshotUser.child('courses')
+      var student = models.createUser(snapshotUser)
+      var counter = 0
+      coursesSnapshot.forEach(course => {
+        counter++
+        database.ref('/courses/' + course.val()).once('value').then(snapshotCourse => {
+          var teacherID = snapshotCourse.val().teacher;
+          database.ref('/users/' + teacherID).once('value').then(snapshotTeacher => {
+            const course = models.createCourse(snapshotCourse, snapshotTeacher);
+            student.courses.push(course)
+            if (student.courses.length == counter) {
+              const teachers = student.filterCoursesByTeacher()
+              return response.render('main_menu_alumnee', {
+                name: student.name,
+                teachers: teachers
+              });
+            }
+          }).catch(err => console.log("Error: " + err))
+        }).catch(err => console.log("Error: " + err))
+      })
+    }).catch(err => console.log("Error: " + err));
+  } else {
+    response.redirect(307, '/login')
+  }
+=======
     if (auth.currentUser !== null) {
       var student;
       var coursesSnapshots = []
@@ -137,6 +173,7 @@ app.get('/main_menu_alumnee', (request, response) => {
 else {
   response.redirect(307, '/login')
 }
+>>>>>>> feature/logica_alumno
 })
 
 
