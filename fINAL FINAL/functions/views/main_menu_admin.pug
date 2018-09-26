@@ -11,14 +11,14 @@ html(lang='en')
      img(src='https://lh3.googleusercontent.com/proxy/COrfOXxGSePnZRaqyMl00uvmd-2iJqp_ax1OcIgV4BauKfT7qDWfCdI0Sow59Tqzpi6-5JGr343wj5GsqYQGkgqHkc_buu8bp6U3o4KlY3p9rXVjjAKg8q52wsOv9EpHL1GjK0pSdksdO6-gp8C4P4uRkb2eeUg=w160-h160-k-no')
   .container
    .row
-    .col-sm-4
+    .col-sm-6
      h1 Smart
      p Bienvenido , #{name}
-    .col-sm-6
+    .col-sm-4
     .col-sm-2
       a(href="login.html") Logout
     .container Acesorias
-      .row
+      .row  
         .col
           table.table
             thead.thead-dark
@@ -28,11 +28,12 @@ html(lang='en')
                 th(scope='col') Horario
                 th(scope='col') dias
                 th(scope='col') 
-                tr
-                th 1
-                th pepito
-                th 11-12
-                th lunes -viernes
+            tbody
+            each asesoria, index in asesorias
+                tr (scope='row') #{index+1}
+                th #{asesoria.teacher.name}
+                th #{asesoria.horario}
+                th #{asesoria.dias}
                 th 
                  a(href="") Editar 
                  a(href="") Eliminar 

@@ -52,12 +52,23 @@ app.get('/login', (request, response) => {
 
 app.get('/main_menu_admin', (request, response) => {
   if (auth.currentUser !== null) {
+    console.log("holi")
+    var admin;
     database.ref('/users/'+auth.currentUser.uid).once('value').then( (snapshotUser) => {
-      var admin = models.createUser(snapshotUser)
+     admin = models.createUser(snapshotUser)
       console.log(admin)
-      return response.render('main_menu_admin', {
-      });
-    }).catch(err => console.log("error: " +err)); 
+      return database.ref('/consulting sessions').orderByChild('teacher').equalTo(teacher.id).once('value')
+    }).then(snapshotAsesorias => {
+        var asesorias = []
+        snapshotAsesorias.forEach(snap)
+          asesorias.push(asesoria)
+        console.log("hasta aca")
+        })
+        return response.render('main_menu_admin', {
+          name: admin.name,
+          asesorias: asesorias
+        
+      }) 
   }else {
     response.redirect(307, '/login')
   }
