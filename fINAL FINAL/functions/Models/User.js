@@ -27,13 +27,11 @@ class Student extends User {
             
             const index = teachers.findIndex(x => x.name === name)
             if (index >= 0) {
-                console.log(index)
                 teachers[index].courses = teachers[index].courses + ", " + course.name
             } else {
                 teachers.push(teacher)
             }
         })
-        console.log(teachers)
         return teachers
     }
 }

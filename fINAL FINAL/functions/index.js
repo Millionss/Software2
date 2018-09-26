@@ -51,6 +51,19 @@ app.get('/', (request, response) => {
   }
 });
 
+/**
+ * Funcion que sirve para borrar asesorias por un administrador.
+ */
+app.get('/admin_borrar_asesoria', (request, response) => {
+  const uid = request.query.uid
+  console.log("Asesoria: "+uid)
+  database.ref('/consulting sessions/'+uid).remove().then(() => {
+    response.redirect('/')
+  }).catch(err => {
+    console.log("Error: "+err);
+    response.redirect('/')
+  })
+})
 
 app.get('/login', (request, response) => {
   response.render('login');
