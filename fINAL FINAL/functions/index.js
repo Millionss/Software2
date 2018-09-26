@@ -59,16 +59,25 @@ app.get('/login', (request, response) => {
 app.get('/main_menu_admin', (request, response) => {
   if (auth.currentUser !== null) {
     var admin;
-
+    var asesorias = []
     database.ref('/users/' + auth.currentUser.uid).once('value').then((snapshotUser) => {
       admin = models.createUser(snapshotUser)
       return database.ref('/consulting sessions').orderByChild('teacher').once('value')
     }).then(snapshotAsesorias => {
-      var asesorias = []
+      var promises = []
       snapshotAsesorias.forEach(snap => {
+        const asesoria = models.createAsesoria(snap)
+        const promise = database.ref('/users/'+asesoria.profesorUID).once('value')
+
         asesorias.push(asesoria)
+        promises.push(promise)
       }) 
-      console.log(admin)
+      return Promise.all(promises)
+    }).then(teacherSnapshots => {
+      asesorias.forEach((asesoria, index) => {
+        asesoria.profesorUID = teacherSnapshots[index].val().name
+      })
+
       return response.render('main_menu_admin', {
         name: admin.name,
         asesorias: asesorias

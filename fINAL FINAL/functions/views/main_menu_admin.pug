@@ -17,7 +17,7 @@ html(lang='en')
     .col-sm-4
     .col-sm-2
       a(href="login.html") Logout
-    .container Acesorias
+    .container Asesorias
       .row  
         .col
           table.table
@@ -30,8 +30,9 @@ html(lang='en')
                 th(scope='col') 
             tbody
             each asesoria, index in asesorias
-                tr (scope='row') #{index+1}
-                th #{asesoria.teacher.name}
+                tr(scope='row')
+                th #{index+1}
+                th #{asesoria.profesorUID }
                 th #{asesoria.horario}
                 th #{asesoria.dias}
                 th 
