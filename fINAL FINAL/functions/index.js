@@ -56,6 +56,14 @@ app.get('/login', (request, response) => {
   response.render('login');
 });
 
+/**
+ * Funcion que muestra el menu principal de administrador.
+ * Primero se llaman todas las asesorias y se almacenan en un array de objetos de tipo Asesoria
+ * Seguido de esto, se llama cada profesor de las asesorias desde firebase y se reemplaza su uid en
+ * el objeto Asesoria por su nombre real.
+ * Para terminar, se renderiza el pug de main_menu_admin con parametros de nombre del administrador y 
+ * el array de asesorias.
+ */
 app.get('/main_menu_admin', (request, response) => {
   if (auth.currentUser !== null) {
     var admin;
