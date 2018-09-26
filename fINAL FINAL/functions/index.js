@@ -96,6 +96,28 @@ app.get('/main_menu_admin', (request, response) => {
   }
 })
 
+app.get('/main_menu_professor', (request, response) => {
+  if (auth.currentUser !== null) {
+    var teacher;
+    database.ref('/users/' + auth.currentUser.uid).once('value').then(snapshotUser => {
+      teacher = models.createUser(snapshotUser)
+      return database.ref('/consulting sessions').orderByChild('teacher').equalTo(teacher.id).once('value')
+    }).then(snapshotAsesorias => {
+      var asesorias = []
+      snapshotAsesorias.forEach(snap => {
+        var asesoria = models.createAsesoria(snap)
+        asesorias.push(asesoria)
+      })
+      return response.render('main_menu_professor', {
+        name: teacher.name,
+        asesorias: asesorias
+      })
+    })
+  } else {
+    response.redirect(307, '/login')
+  }
+})
+
 /**
  * Esta funcion muestra el menu principal del alumno.
  * Primero se obtiene el snapshot del alumno desde Firebase y se crea un objeto de clase Student.
