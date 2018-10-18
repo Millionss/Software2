@@ -4,6 +4,7 @@ const express = require('express');
 const session = require('express-session');
 const engine = require('pug');
 const modelsClass = require('./Models/ModelFactory');
+const uuid = require('uuid/v4');
 
 const firebaseApp = firebase.initializeApp({
   apiKey: "AIzaSyC-o77UiDDryjw7blt2rmyk9y1X6JmzVMg",
@@ -65,6 +66,58 @@ app.get('/admin_borrar_asesoria', (request, response) => {
   })
 })
 
+/**
+ * Funcion que maneja la creacion de asesorias. Recibe los siguientes parametros:
+ *    days: array de Strings
+ *    time: String
+ *    teacher: uid del profesor que es un String
+ * 
+ * Al final redirecciona al usuario a su pagina principal. Se podria mejorar con AJAX y JS frontend
+ */
+app.post('/admin_crear_asesoria', (request, response) => {
+  const days = request.body.days
+  const time = request.body.time
+  const teacher = request.body.teacher
+
+  const uid = uuid()
+
+  database.ref(`/consulting sessions/${uid}`).set({
+    teacher: teacher,
+    schedule: {
+      time: time,
+      days: days
+    }
+  }).then( _ => {
+    response.redirect('/')
+  })
+})
+
+/**
+ * Funcion que maneja la actualizacion de asesorias. Recibe los siguientes parametros:
+ *    days: array de Strings
+ *    time: String
+ *    teacher: uid del profesor que es un String
+ *    uid: uid de la asesoria para actualizar. Es un String
+ * 
+ * Al final redirecciona al usuario a su pagina principal. Se podria mejorar con AJAX y JS frontend
+ */
+app.post('/admin_actualizar_asesoria', (request, response) => {
+  const days = request.body.days
+  const time = request.body.time
+  const teacher = request.body.teacher
+  const uid = request.body.uid
+
+  database.ref(`/consulting sessions/${uid}`).update({
+    teacher: teacher,
+    schedule: {
+      time: time,
+      days: days
+    }
+  }).then(_ => {
+    response.redirect('/')
+  })
+})
+
 app.get('/login', (request, response) => {
   response.render('login');
 });
@@ -85,23 +138,30 @@ app.get('/main_menu_admin', (request, response) => {
       admin = models.createUser(snapshotUser)
       return database.ref('/consulting sessions').orderByChild('teacher').once('value')
     }).then(snapshotAsesorias => {
-      var promises = []
       snapshotAsesorias.forEach(snap => {
         const asesoria = models.createAsesoria(snap)
-        const promise = database.ref('/users/'+asesoria.profesorUID).once('value')
-
         asesorias.push(asesoria)
-        promises.push(promise)
       }) 
-      return Promise.all(promises)
+      return database.ref('/users').orderByChild("type").equalTo("professor").once('value')
     }).then(teacherSnapshots => {
-      asesorias.forEach((asesoria, index) => {
-        asesoria.profesorUID = teacherSnapshots[index].val().name
+      var teachers = []
+
+      teacherSnapshots.forEach(teacherSnap => {
+        var teacher = models.createUser(teacherSnap)
+        teachers.push(teacher)
       })
 
+      asesorias.forEach(asesoria => {
+        var exactTeacher = teachers.find(element => {
+          return element.id == asesoria.profesorUID
+        })
+        asesoria.profesorUID = exactTeacher.name
+      })
+      
       return response.render('main_menu_admin', {
         name: admin.name,
-        asesorias: asesorias
+        asesorias: asesorias,
+        teachers: teachers
       })
     }) 
   } else {
