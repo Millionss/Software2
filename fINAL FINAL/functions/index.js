@@ -80,6 +80,7 @@ app.post('/admin_crear_asesoria', (request, response) => {
   const teacher = request.body.teacher
 
   const uid = uuid()
+  console.log(uid)
 
   database.ref(`/consulting sessions/${uid}`).set({
     teacher: teacher,
@@ -157,7 +158,8 @@ app.get('/main_menu_admin', (request, response) => {
         })
         asesoria.profesorUID = exactTeacher.name
       })
-      
+      console.log("Profesores")
+      console.log(teachers)
       return response.render('main_menu_admin', {
         name: admin.name,
         asesorias: asesorias,
@@ -168,6 +170,7 @@ app.get('/main_menu_admin', (request, response) => {
     response.redirect(307, '/login')
   }
 })
+
 
 app.get('/main_menu_professor', (request, response) => {
   if (auth.currentUser !== null) {
@@ -250,6 +253,43 @@ app.get('/logout', (request, response) => {
   auth.signOut().then(() => {
     response.redirect('/login')
   })
+})
+
+app.get('/pantalla_seleccion', (request, response) => {
+  if (auth.currentUser !== null) {
+    var student;
+    var coursesSnapshots = []
+    database.ref('/users/' + auth.currentUser.uid).once('value').then(snapshotUser => {
+      student = models.createUser(snapshotUser)
+      var promises = [];
+
+      snapshotUser.child('courses').forEach(course => {
+        coursesSnapshots.push(course)
+        var teacherID = course.val().teacher
+        console.log(teacherID)
+        promise = database.ref('/users/' + teacherID).once('value')
+        promises.push(promise)
+      })
+      return Promise.all(promises)
+      console.log(promises)
+    }).then(teacherSnapshots => {
+      teacherSnapshots.forEach((teacherSnapshot, index) => {
+        const course = models.createCourse(coursesSnapshots[index], teacherSnapshot)
+        student.courses.push(course)
+      })
+      const teachers = student.filterCoursesByTeacher()
+      return response.render('pantalla_seleccion', {
+        name: student.name,
+        teachers: teachers
+      }) 
+    })
+    console.log('Cursos:')
+    console.log(coursesSnapshots)
+    console.log(student)
+}
+else {
+response.redirect(307, '/main_menu_alumnee')
+}
 })
 
 exports.app = functions.https.onRequest(app);
