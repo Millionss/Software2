@@ -7,9 +7,10 @@ class User {
 }
 
 class Student extends User {
-    constructor(id, name, email, courses) {
+    constructor(id, name, email, courses, consultingSessionsAttended) {
         super(id, name, email)
         this.courses = courses
+        this.consultingSessionsAttended = consultingSessionsAttended
     }
 
     /**

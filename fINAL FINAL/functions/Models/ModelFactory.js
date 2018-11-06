@@ -13,14 +13,15 @@ class ModelFactory {
         var user;
         switch (val.type) {
             case "alumnee":
-                user = new users.Student(snapshot.key, val.name, val.email, []);
+                var appointments =snapshot.child('appointments').map(snapshot => snapshot.val())
+                user = new users.Student(snapshot.key, val.name, val.email, [], appointments);
                 break;
             case "professor":
                 user = new users.Teacher(snapshot.key, val.name, val.email, []);
                 break;
             case "admin":
-            user = new users.Admin(snapshot.key, val.name, val.email, val.type, []);
-            break;
+                user = new users.Admin(snapshot.key, val.name, val.email, val.type, []);
+                break;
         }
         return user;
     }
@@ -46,25 +47,18 @@ class ModelFactory {
      */
     createAsesoria(snapshot) {
         const val = snapshot.val();
-        var days = "";
-        //Guardamos los dias como un string
-        snapshot.child('schedule/days').forEach(day => {
-            console.log(days)
-            if (days) {
-                days = days + ", " + day.val();
-            } else {
-                days = day.val();
-            }
-        })
+        //Guardamos los dias como un array de strings
+        const days = snapshot.child('schedule/days').map(snapshot => snapshot.val())
         var time = val.schedule.time;
         var teacherUID = val.teacher;
-        var citas = []
-        snapshot.child('appointments').forEach(appointment => {
-            var cita = new asesoria.Cita(appointment.key, appointment.val().student, appointment.val().date)
-            citas.push(cita)
-        })
-        
+        var citas = snapshot.child('appointments').map(snapshot => this.createCita(snapshot))        
         return new asesoria.Asesoria(snapshot.key, citas, days, time, teacherUID);
+    }
+
+    createCita(snapshot) {
+        const val = snapshot.val()
+        var cita = new asesoria.Cita(snapshot.key, val.student, val.date, val.completed)
+        return cita
     }
 }
 
