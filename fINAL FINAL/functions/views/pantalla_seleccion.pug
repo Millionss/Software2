@@ -26,14 +26,16 @@ html(lang='en')
                     tr
                     th(scope='col') 
                     th(scope='col') Profesor
-                    th(scope='col') Cursos
-                    th(scope='col') Citas
+                    th(scope='col') Fecha
+                    th(scope='col') Completado
                 tbody
                   tr
-                  th(scope='row') 1
-                  td Hernan Quintana
-                  td Software 2
-                  td 11-12
+                  each session in cs
+                    each appointment, index in session.citas
+                      th(scope='row') #{index + 1}
+                      th #{session.teacherID}
+                      th #{appointment.date}
+                      th #{appointment.completed}
               .col-sm-8
                 button.btn.btn-primary(type='button', data-toggle='modal', data-target='#agregarCita') Reservar cita
               table.table
