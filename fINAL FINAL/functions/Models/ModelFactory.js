@@ -13,7 +13,8 @@ class ModelFactory {
         var user;
         switch (val.type) {
             case "alumnee":
-                var appointments =snapshot.child('appointments').map(snapshot => snapshot.val())
+                var appointments = []
+                snapshot.child('appointments').forEach(snapshot => appointments.push(snapshot.val()))
                 user = new users.Student(snapshot.key, val.name, val.email, [], appointments);
                 break;
             case "professor":
@@ -48,10 +49,12 @@ class ModelFactory {
     createAsesoria(snapshot) {
         const val = snapshot.val();
         //Guardamos los dias como un array de strings
-        const days = snapshot.child('schedule/days').map(snapshot => snapshot.val())
+        const days = []
+        snapshot.child('schedule/days').forEach(snapshot => days.push(snapshot.val()))
         var time = val.schedule.time;
         var teacherUID = val.teacher;
-        var citas = snapshot.child('appointments').map(snapshot => this.createCita(snapshot))        
+        var citas = []
+        snapshot.child('appointments').forEach(snapshot => citas.push(this.createCita(snapshot)))
         return new asesoria.Asesoria(snapshot.key, citas, days, time, teacherUID);
     }
 

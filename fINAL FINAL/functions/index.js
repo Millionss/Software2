@@ -139,10 +139,12 @@ app.get('/main_menu_admin', (request, response) => {
       admin = models.createUser(snapshotUser)
       return database.ref('/consulting sessions').orderByChild('teacher').once('value')
     }).then(snapshotAsesorias => {
-      asesorias = snapshotAsesorias.map(snap => asesoria = models.createAsesoria(snap)) 
+      asesorias = []
+      snapshotAsesorias.forEach(snap => asesorias.push(models.createAsesoria(snap)))
       return database.ref('/users').orderByChild("type").equalTo("professor").once('value')
     }).then(teacherSnapshots => {
-      var teachers = teacherSnapshots.map(teacherSnap => teacher = models.createUser(teacherSnap))
+      var teachers = []
+      teacherSnapshots.forEach(teacherSnap => teachers.push(models.createUser(teacherSnap)))
       asesorias.forEach(asesoria => {
         const exactTeacher = teachers.find(element => {
           return element.id == asesoria.profesorUID
@@ -168,7 +170,8 @@ app.get('/main_menu_professor', (request, response) => {
       teacher = models.createUser(snapshotUser)
       return database.ref('/consulting sessions').orderByChild('teacher').equalTo(teacher.id).once('value')
     }).then(snapshotAsesorias => {
-      var asesorias = snapshotAsesorias.map(snap => asesoria = models.createAsesoria(snap))
+      var asesorias = []
+      snapshotAsesorias.forEach(snap => asesorias.push(models.createAsesoria(snap)))
       return response.render('main_menu_professor', {
         name: teacher.name,
         asesorias: asesorias
@@ -195,14 +198,19 @@ app.get('/main_menu_alumnee', (request, response) => {
       var coursesSnapshots = []
       database.ref('/users/' + auth.currentUser.uid).once('value').then(snapshotUser => {
         student = models.createUser(snapshotUser)
-        const promises = snapshotUser.child('courses').map(course => {
+        const promises = []
+        snapshotUser.child('courses').forEach(course => {
           coursesSnapshots.push(course)
           var teacherID = course.val().teacher
-          return promise = database.ref('/users/' + teacherID).once('value')
+          promises.push(promise = database.ref('/users/' + teacherID).once('value'))
         })
         return Promise.all(promises)
       }).then(teacherSnapshots => {
-        student.courses = teacherSnapshots.map((teacherSnapshot, index) => course = models.createCourse(coursesSnapshots[index], teacherSnapshot))
+        student.courses = []
+        teacherSnapshots.forEach((teacherSnapshot, index) => {
+          const course = models.createCourse(coursesSnapshots[index], teacherSnapshot)
+          student.courses.push(course)
+        })
         const teachers = student.filterCoursesByTeacher()
         return response.render('main_menu_alumnee', {
           name: student.name,
@@ -243,17 +251,25 @@ app.get('/pantalla_seleccion', (request, response) => {
 
       return Promise.all(consultingSessions) 
     }).then(csSnapshots => {
-       cs = csSnapshots.map(snapshot => {
+       cs = [] 
+       csSnapshots.forEach(snapshot => {
         var session = models.createAsesoria(snapshot)
         const citas = session.citas.filter(cita => cita.studentID === auth.currentUser.id)
         session.citas = citas
-        return session
+        cs.push(session)
       })
-      const teacherPromises = cs.map(session => database.ref(`users/${session.teacherID}`).once)
-      
+      const teacherPromises = cs.map(session => {
+        console.log(`teacher id ${session.teacherID}`)
+        return database.ref(`users/${session.teacherID}`).once('value') 
+      })
+
       return Promise.all(teacherPromises)
     }).then(teacherSnapshots => {
-      const teachers = teacherSnapshots.map(snap => models.createUser(snap))
+      const teachers = []
+      teacherSnapshots.forEach(snap => {
+        console.log(snap)
+        teachers.push(models.createUser(snap))
+      })
       cs.forEach(session => {
         const exactTeacher = teachers.find(element => {
           return element.id == session.profesorUID
