@@ -235,7 +235,7 @@ app.get('/main_menu_alumnee', (request, response) => {
           teachers: teachers
         })
       })
-}else {
+  }else {
   response.redirect(307, '/login')
 }
 })
