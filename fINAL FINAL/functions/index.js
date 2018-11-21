@@ -28,6 +28,7 @@ app.use(session({
   cookie: {}
 }))
 
+
 /**
  * Maneja la pagina principal. Este get redirecciona al usuario a su menu principal segun su 
  * tipo de usuario. Si no se encuentra autentificado, se lo redirecciona al login.
