@@ -242,36 +242,7 @@ app.get('/main_menu_alumnee', (request, response) => {
 })
 
 
-app.post('/alum_crear_cita', (request, response) => {
-  const date = request.body.date
-  const completed = request.body.completed
-  const time = request.body.time
-  const teacher = request.body.teacher
 
-  const uid = uuid()
-  console.log('=========================')
-  console.log(teacher)
-
-  const cs = uuid()
-  console.log('==========================')
-
-  //database.ref(`users/${id}/consulting sessions/`).set({
-    //cs: cs
-  //})
-  database.ref(`users/${auth.currentUser.uid}/appointments/`).set({
-    cs: cs
-  })
-
-  database.ref(`consulting sessions/${cs}/appointment/`+uid).set({
-    teacher: teacher,
-    date: date,
-    time: time,
-    //completed:completed
-
-  }).then( _ => {
-    response.redirect('/pantalla_seleccion')
-  })
-})
 
 
 app.post('/login_comprobar', (request, response) => {
