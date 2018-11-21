@@ -139,18 +139,28 @@ app.get('/main_menu_admin', (request, response) => {
       admin = models.createUser(snapshotUser)
       return database.ref('/consulting sessions').orderByChild('teacher').once('value')
     }).then(snapshotAsesorias => {
-      asesorias = []
-      snapshotAsesorias.forEach(snap => asesorias.push(models.createAsesoria(snap)))
+      snapshotAsesorias.forEach(snap => {
+        const asesoria = models.createAsesoria(snap)
+        asesorias.push(asesoria)
+      }) 
       return database.ref('/users').orderByChild("type").equalTo("professor").once('value')
     }).then(teacherSnapshots => {
       var teachers = []
-      teacherSnapshots.forEach(teacherSnap => teachers.push(models.createUser(teacherSnap)))
+
+      teacherSnapshots.forEach(teacherSnap => {
+        var teacher = models.createUser(teacherSnap)
+        teachers.push(teacher)
+      })
+
       asesorias.forEach(asesoria => {
-        const exactTeacher = teachers.find(element => {
+        var exactTeacher = teachers.find(element => {
           return element.id == asesoria.profesorUID
         })
         asesoria.profesorUID = exactTeacher.name
       })
+      console.log("Profesores")
+      console.log(teachers)
+      console.log(asesorias)
       return response.render('main_menu_admin', {
         name: admin.name,
         asesorias: asesorias,
@@ -171,7 +181,10 @@ app.get('/main_menu_professor', (request, response) => {
       return database.ref('/consulting sessions').orderByChild('teacher').equalTo(teacher.id).once('value')
     }).then(snapshotAsesorias => {
       var asesorias = []
-      snapshotAsesorias.forEach(snap => asesorias.push(models.createAsesoria(snap)))
+      snapshotAsesorias.forEach(snap => {
+        var asesoria = models.createAsesoria(snap)
+        asesorias.push(asesoria)
+      })
       return response.render('main_menu_professor', {
         name: teacher.name,
         asesorias: asesorias
@@ -198,29 +211,65 @@ app.get('/main_menu_alumnee', (request, response) => {
       var coursesSnapshots = []
       database.ref('/users/' + auth.currentUser.uid).once('value').then(snapshotUser => {
         student = models.createUser(snapshotUser)
-        const promises = []
+        var promises = [];
+        
         snapshotUser.child('courses').forEach(course => {
           coursesSnapshots.push(course)
+          
           var teacherID = course.val().teacher
-          promises.push(promise = database.ref('/users/' + teacherID).once('value'))
+          //console.log(teacherID)
+          console.log('===========')
+          promise = database.ref('/users/' + teacherID).once('value')
+          promises.push(promise)
         })
         return Promise.all(promises)
       }).then(teacherSnapshots => {
-        student.courses = []
         teacherSnapshots.forEach((teacherSnapshot, index) => {
           const course = models.createCourse(coursesSnapshots[index], teacherSnapshot)
           student.courses.push(course)
         })
         const teachers = student.filterCoursesByTeacher()
+        //console.log(teachers)
         return response.render('main_menu_alumnee', {
-          name: student.name,
+          name: student,
           teachers: teachers
-        }) 
+        })
       })
-}
-else {
+}else {
   response.redirect(307, '/login')
 }
+})
+
+
+app.post('/alum_crear_cita', (request, response) => {
+  const date = request.body.date
+  const completed = request.body.completed
+  const time = request.body.time
+  const teacher = request.body.teacher
+
+  const uid = uuid()
+  console.log('=========================')
+  console.log(teacher)
+
+  const cs = uuid()
+  console.log('==========================')
+
+  //database.ref(`users/${id}/consulting sessions/`).set({
+    //cs: cs
+  //})
+  database.ref(`users/${auth.currentUser.uid}/appointments/`).set({
+    cs: cs
+  })
+
+  database.ref(`consulting sessions/${cs}/appointment/`+uid).set({
+    teacher: teacher,
+    date: date,
+    time: time,
+    //completed:completed
+
+  }).then( _ => {
+    response.redirect('/pantalla_seleccion')
+  })
 })
 
 
@@ -303,9 +352,13 @@ app.get('/pantalla_seleccion', (request, response) => {
         teachers: teachers
       })
     })
+    console.log(session)
+    console.log('===========hola=====')
+    console.log(cs)
   } else {
     response.redirect(307, '/')
   }
 })
+
 
 exports.app = functions.https.onRequest(app);
