@@ -6,4 +6,4 @@ install:
 script:
   - echo "deploying"
 after_seuccess:
-  - firebase deploy --token $FIREBASE_TOKEN
+  - firebase deploy --token "$FIREBASE_TOKEN"
